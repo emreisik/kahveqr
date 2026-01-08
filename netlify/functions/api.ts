@@ -28,8 +28,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check - Netlify strips /api prefix, so just /health
+app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     message: 'KahveQR API is running on Netlify',
@@ -37,7 +37,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Routes
+// Routes - Netlify strips /api prefix automatically
 app.use('/api/auth', authRoutes);
 app.use('/api/business-auth', businessAuthRoutes);
 app.use('/api/cafes', cafeRoutes);
