@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "buildCommand": "npm ci && npx prisma generate --schema=./backend/prisma/schema.prisma && npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
+
