@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:frontend && npm run build:backend",
+    "build": "npm run prisma:generate && npm run build:frontend",
     "build:frontend": "npx vite build",
     "build:backend": "cd backend && npx prisma generate",
     "netlify:deploy": "netlify deploy --prod",
-    "prisma:generate": "cd backend && npx prisma generate",
+    "prisma:generate": "npx prisma generate --schema=./backend/prisma/schema.prisma",
     "prisma:studio": "cd backend && npx prisma studio"
   },
   "dependencies": {

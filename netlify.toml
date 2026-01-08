@@ -1,6 +1,6 @@
 [build]
   # Frontend build command
-  command = "npm ci && cd backend && npm ci && cd .. && npm run build"
+  command = "npm ci && cd backend && npm ci && cd .. && npx prisma generate --schema=./backend/prisma/schema.prisma && npm run build"
   # Frontend build output directory
   publish = "dist"
   # Netlify Functions directory
