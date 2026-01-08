@@ -4,67 +4,77 @@ import { authenticateToken, AuthRequest } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Get all cafes (public)
+// Get all brands (public)
 router.get('/', async (req, res) => {
   try {
-    const cafes = await prisma.cafe.findMany({
+    const brands = await prisma.cafeBrand.findMany({
       orderBy: { name: 'asc' },
+      include: {
+        branches: true,
+      },
     });
 
-    res.json(cafes);
+    res.json(brands);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch cafes' });
+    res.status(500).json({ error: 'Failed to fetch brands' });
   }
 });
 
-// Get nearby cafes with distance calculation (simplified)
+// Get nearby branches with distance calculation (simplified)
 router.get('/nearby', async (req, res) => {
   try {
     const { lat, lng } = req.query;
     
-    // Get all cafes (in production, you'd use PostGIS for proper geospatial queries)
-    const cafes = await prisma.cafe.findMany();
+    // Get all branches (in production, you'd use PostGIS for proper geospatial queries)
+    const branches = await prisma.cafeBranch.findMany({
+      include: {
+        brand: true,
+      },
+    });
 
     // Calculate distance if coordinates provided
     if (lat && lng) {
       const userLat = parseFloat(lat as string);
       const userLng = parseFloat(lng as string);
 
-      const cafesWithDistance = cafes.map((cafe) => {
+      const branchesWithDistance = branches.map((branch) => {
         const distance = calculateDistance(
           userLat,
           userLng,
-          cafe.latitude || 0,
-          cafe.longitude || 0
+          branch.latitude || 0,
+          branch.longitude || 0
         );
-        return { ...cafe, distanceKm: distance };
+        return { ...branch, distanceKm: distance };
       });
 
       // Sort by distance
-      cafesWithDistance.sort((a, b) => a.distanceKm - b.distanceKm);
-      return res.json(cafesWithDistance);
+      branchesWithDistance.sort((a, b) => a.distanceKm - b.distanceKm);
+      return res.json(branchesWithDistance);
     }
 
-    res.json(cafes);
+    res.json(branches);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch nearby cafes' });
+    res.status(500).json({ error: 'Failed to fetch nearby branches' });
   }
 });
 
-// Get single cafe
+// Get single brand
 router.get('/:id', async (req, res) => {
   try {
-    const cafe = await prisma.cafe.findUnique({
+    const brand = await prisma.cafeBrand.findUnique({
       where: { id: req.params.id },
+      include: {
+        branches: true,
+      },
     });
 
-    if (!cafe) {
-      return res.status(404).json({ error: 'Cafe not found' });
+    if (!brand) {
+      return res.status(404).json({ error: 'Brand not found' });
     }
 
-    res.json(cafe);
+    res.json(brand);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch cafe' });
+    res.status(500).json({ error: 'Failed to fetch brand' });
   }
 });
 

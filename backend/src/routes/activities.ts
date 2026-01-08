@@ -10,7 +10,7 @@ router.use(authenticateToken);
 // Get user's activities
 router.get('/', async (req: AuthRequest, res) => {
   try {
-    const { type, cafeId, limit = '50' } = req.query;
+    const { type, brandId, branchId, limit = '50' } = req.query;
 
     const where: any = { userId: req.userId };
     
@@ -18,13 +18,20 @@ router.get('/', async (req: AuthRequest, res) => {
       where.type = type;
     }
     
-    if (cafeId) {
-      where.cafeId = cafeId;
+    if (brandId) {
+      where.brandId = brandId;
+    }
+    
+    if (branchId) {
+      where.branchId = branchId;
     }
 
     const activities = await prisma.activity.findMany({
       where,
-      include: { cafe: true },
+      include: { 
+        brand: true,
+        branch: true,
+      },
       orderBy: { createdAt: 'desc' },
       take: parseInt(limit as string),
     });

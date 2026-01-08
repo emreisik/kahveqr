@@ -2,17 +2,17 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
 
-// Import routes
-import authRoutes from '../backend/src/routes/auth.js';
-import businessAuthRoutes from '../backend/src/routes/businessAuth.js';
-import cafeRoutes from '../backend/src/routes/cafes.js';
-import membershipRoutes from '../backend/src/routes/memberships.js';
-import activityRoutes from '../backend/src/routes/activities.js';
-import userRoutes from '../backend/src/routes/users.js';
-import scanRoutes from '../backend/src/routes/scan.js';
-import businessStatsRoutes from '../backend/src/routes/businessStats.js';
-import businessStaffRoutes from '../backend/src/routes/businessStaff.js';
-import branchesRoutes from '../backend/src/routes/branches.js';
+// Import routes - use require for CommonJS compatibility
+const authRoutes = require('../backend/src/routes/auth.js');
+const businessAuthRoutes = require('../backend/src/routes/businessAuth.js');
+const cafeRoutes = require('../backend/src/routes/cafes.js');
+const membershipRoutes = require('../backend/src/routes/memberships.js');
+const activityRoutes = require('../backend/src/routes/activities.js');
+const userRoutes = require('../backend/src/routes/users.js');
+const scanRoutes = require('../backend/src/routes/scan.js');
+const businessStatsRoutes = require('../backend/src/routes/businessStats.js');
+const businessStaffRoutes = require('../backend/src/routes/businessStaff.js');
+const branchesRoutes = require('../backend/src/routes/branches.js');
 
 // Create Express app
 const app = express();

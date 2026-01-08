@@ -232,7 +232,13 @@ router.put('/:id', requireRole(['OWNER', 'BRANCH_MANAGER']), async (req: AuthReq
         role: true,
         isActive: true,
         createdAt: true,
-        cafe: {
+        brand: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        branch: {
           select: {
             id: true,
             name: true,

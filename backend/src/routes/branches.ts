@@ -62,7 +62,13 @@ router.post('/', requireRole(['OWNER']), async (req: AuthRequest, res) => {
 
     const branch = await prisma.cafeBranch.create({
       data: {
-        ...data,
+        name: data.name,
+        address: data.address,
+        phone: data.phone,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        workingHours: data.workingHours,
+        notificationSettings: data.notificationSettings,
         brandId: businessUser.brandId,
       },
     });
