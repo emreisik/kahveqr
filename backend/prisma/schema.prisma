@@ -1,0 +1,132 @@
+// Prisma schema for KahveQR with Neon PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String?      @unique
+  phone        String?      @unique
+  name         String?
+  passwordHash String?      @map("password_hash")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  
+  memberships  Membership[]
+  activities   Activity[]
+
+  @@map("users")
+}
+
+enum BusinessRole {
+  OWNER
+  BRANCH_MANAGER
+  STAFF
+}
+
+model BusinessUser {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  passwordHash String        @map("password_hash")
+  brandId      String?       @map("brand_id")
+  branchId     String?       @map("branch_id")
+  role         BusinessRole  @default(STAFF)
+  isActive     Boolean       @default(true) @map("is_active")
+  createdBy    String?       @map("created_by")
+  lastLoginAt  DateTime?     @map("last_login_at")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+  
+  brand        CafeBrand?    @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  branch       CafeBranch?   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  creator      BusinessUser? @relation("CreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  createdUsers BusinessUser[] @relation("CreatedBy")
+
+  @@map("business_users")
+}
+
+model CafeBrand {
+  id                   String         @id @default(uuid())
+  name                 String
+  category             String?
+  imageUrl             String?        @map("image_url")
+  stampsRequired       Int            @map("stamps_required")
+  rewardName           String         @map("reward_name")
+  loyaltySettings      Json?          @map("loyalty_settings")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt @map("updated_at")
+  
+  branches             CafeBranch[]
+  memberships          Membership[]
+  activities           Activity[]
+  businessUsers        BusinessUser[]
+
+  @@map("cafe_brands")
+}
+
+model CafeBranch {
+  id                   String         @id @default(uuid())
+  brandId              String         @map("brand_id")
+  name                 String         // e.g., "Kadıköy Şubesi"
+  address              String?
+  phone                String?
+  latitude             Float?
+  longitude            Float?
+  openNow              Boolean        @default(true) @map("open_now")
+  workingHours         Json?          @map("working_hours")
+  notificationSettings Json?          @map("notification_settings")
+  createdAt            DateTime       @default(now()) @map("created_at")
+  updatedAt            DateTime       @updatedAt @map("updated_at")
+  
+  brand                CafeBrand      @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  activities           Activity[]
+  businessUsers        BusinessUser[]
+
+  @@index([brandId])
+  @@map("cafe_branches")
+}
+
+model Membership {
+  id           String     @id @default(uuid())
+  userId       String     @map("user_id")
+  brandId      String     @map("brand_id")
+  stamps       Int        @default(0)
+  joinedAt     DateTime   @default(now()) @map("joined_at")
+  lastStampAt  DateTime?  @map("last_stamp_at")
+  
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brand        CafeBrand  @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, brandId])
+  @@index([userId])
+  @@index([brandId])
+  @@map("memberships")
+}
+
+model Activity {
+  id        String      @id @default(uuid())
+  userId    String      @map("user_id")
+  brandId   String      @map("brand_id")
+  branchId  String      @map("branch_id")
+  type      String      // 'earn' or 'redeem'
+  delta     Int         // +1 for stamp, -stampsRequired for redeem
+  createdAt DateTime    @default(now()) @map("created_at")
+  
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brand     CafeBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  branch    CafeBranch  @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([brandId])
+  @@index([branchId])
+  @@index([createdAt(sort: Desc)])
+  @@map("activities")
+}
+

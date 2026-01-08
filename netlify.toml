@@ -1,0 +1,49 @@
+[build]
+  # Frontend build command
+  command = "npm run build"
+  # Frontend build output directory
+  publish = "dist"
+  # Netlify Functions directory
+  functions = "netlify/functions"
+
+# Redirect API calls to Netlify Function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+# SPA fallback - redirect all other routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Functions configuration
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  # Increase timeout for longer operations (max 10s on free plan)
+  # For paid plans, you can increase this to 26s
+  included_files = ["backend/src/**", "backend/prisma/**"]
+
+# Environment variables (set these in Netlify Dashboard)
+# DATABASE_URL = "your-neon-postgresql-url"
+# JWT_SECRET = "your-jwt-secret-key"
+# NODE_ENV = "production"
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+

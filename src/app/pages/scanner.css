@@ -1,0 +1,24 @@
+/* QR Reader camera styling */
+#qr-reader {
+  position: relative;
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 0.75rem;
+  display: block;
+}
+
+#qr-reader__dashboard_section {
+  display: none !important;
+}
+
+#qr-reader__scan_region {
+  border-radius: 0.75rem !important;
+}
+
+#qr-reader__camera_selection {
+  margin: 10px 0;
+}
+
