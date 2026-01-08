@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run build:frontend && npm run build:backend",
-    "build:frontend": "vite build",
-    "build:backend": "cd backend && npm run prisma:generate",
+    "build:frontend": "npx vite build",
+    "build:backend": "cd backend && npx prisma generate",
     "netlify:deploy": "netlify deploy --prod",
     "prisma:generate": "cd backend && npx prisma generate",
     "prisma:studio": "cd backend && npx prisma studio"

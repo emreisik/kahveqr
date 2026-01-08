@@ -1,6 +1,6 @@
 [build]
   # Frontend build command
-  command = "npm install && cd backend && npm install && cd .. && npm run build"
+  command = "npm ci && cd backend && npm ci && cd .. && npm run build"
   # Frontend build output directory
   publish = "dist"
   # Netlify Functions directory
