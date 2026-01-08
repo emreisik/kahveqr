@@ -23,11 +23,8 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  # External packages that shouldn't be bundled
-  external_node_modules = ["@prisma/client", "prisma"]
   # Increase timeout for longer operations (max 10s on free plan)
   # For paid plans, you can increase this to 26s
-  included_files = ["backend/prisma/schema.prisma", "node_modules/.prisma/**", "node_modules/@prisma/**"]
 
 # Environment variables (set these in Netlify Dashboard)
 # DATABASE_URL = "your-neon-postgresql-url"
