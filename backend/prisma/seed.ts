@@ -16,12 +16,14 @@ async function main() {
 
   console.log('✓ Cleared existing data');
 
-  // Create demo user
+  // Create demo user with password
+  const passwordHash = await bcrypt.hash('123456', 10);
   const user = await prisma.user.create({
     data: {
       email: 'demo@kahveqr.com',
       name: 'Demo Kullanıcı',
       phone: '+905551234567',
+      passwordHash,
     },
   });
 
