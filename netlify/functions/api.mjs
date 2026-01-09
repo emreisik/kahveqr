@@ -1,7 +1,6 @@
 import serverless from 'serverless-http';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 // Import routes
 import authRoutes from '../../backend/src/routes/auth.js';
@@ -15,9 +14,6 @@ import businessStatsRoutes from '../../backend/src/routes/businessStats.js';
 import businessStaffRoutes from '../../backend/src/routes/businessStaff.js';
 import branchesRoutes from '../../backend/src/routes/branches.js';
 
-// Load environment variables
-dotenv.config();
-
 // Create Express app
 const app = express();
 
@@ -28,13 +24,16 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Health check - Netlify redirects /api/health to /.netlify/functions/api/health
-// serverless-http receives /health (without /api prefix)
+// Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     message: 'KahveQR API is running on Netlify Pro',
     timestamp: new Date().toISOString(),
+    env: {
+      hasDatabase: !!process.env.DATABASE_URL,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+    }
   });
 });
 
@@ -51,7 +50,7 @@ app.use('/business/staff', businessStaffRoutes);
 app.use('/business/branches', branchesRoutes);
 
 // Error handler
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err, req, res, next) => {
   console.error('Error:', err);
   res.status(err.status || 500).json({
     error: err.message || 'Internal server error',
@@ -60,8 +59,14 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not found' });
+  console.log('404 - Request URL:', req.url, 'Path:', req.path);
+  res.status(404).json({ 
+    error: 'Not found',
+    requestedUrl: req.url,
+    requestedPath: req.path,
+  });
 });
 
 // Export as Netlify Function
 export const handler = serverless(app);
+
