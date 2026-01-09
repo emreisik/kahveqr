@@ -16,6 +16,7 @@ const createBranchSchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   workingHours: z.any().optional(),
+  notificationSettings: z.any().optional(),
 });
 
 const updateBranchSchema = z.object({
