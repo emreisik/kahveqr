@@ -45,10 +45,24 @@ router.post('/stamp', authenticateBusinessUser, async (req: AuthRequest, res) =>
 
     // Get brand and branch from business user
     const brandId = businessUser.brandId;
-    const branchId = businessUser.branchId;
+    let branchId = businessUser.branchId;
 
-    if (!brandId || !branchId) {
-      return res.status(400).json({ error: 'Marka veya şube bilgisi bulunamadı' });
+    if (!brandId) {
+      return res.status(400).json({ error: 'Marka bilgisi bulunamadı' });
+    }
+
+    // If branchId is null (OWNER user), use first branch of the brand
+    if (!branchId) {
+      const firstBranch = await prisma.cafeBranch.findFirst({
+        where: { brandId },
+        orderBy: { createdAt: 'asc' },
+      });
+      
+      if (!firstBranch) {
+        return res.status(400).json({ error: 'Bu markaya ait şube bulunamadı' });
+      }
+      
+      branchId = firstBranch.id;
     }
 
     // Verify customer exists
@@ -173,9 +187,20 @@ router.post('/redeem', authenticateBusinessUser, async (req: AuthRequest, res) =
       return res.status(403).json({ error: 'Bu QR kod başka bir markaya ait' });
     }
 
-    const branchId = businessUser.branchId;
+    let branchId = businessUser.branchId;
+    
+    // If branchId is null (OWNER user), use first branch of the brand
     if (!branchId) {
-      return res.status(400).json({ error: 'Şube bilgisi bulunamadı' });
+      const firstBranch = await prisma.cafeBranch.findFirst({
+        where: { brandId },
+        orderBy: { createdAt: 'asc' },
+      });
+      
+      if (!firstBranch) {
+        return res.status(400).json({ error: 'Bu markaya ait şube bulunamadı' });
+      }
+      
+      branchId = firstBranch.id;
     }
 
     // Check QR code age (valid for 5 minutes)
