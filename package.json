@@ -93,7 +93,6 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.5",
-    "@vercel/node": "^3.2.29",
     "prisma": "^6.19.1"
   },
   "peerDependencies": {
