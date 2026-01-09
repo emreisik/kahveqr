@@ -1,12 +1,38 @@
 // Simple PWA icon generator using Canvas (Node.js or browser)
 // For production, use professional icon tools or design software
 
-import { writeFileSync } from 'fs';
-import { createCanvas } from 'canvas';
+import { existsSync, writeFileSync } from 'fs';
+
+// Check if icons already exist
+const iconFiles = [
+  'public/icon-192x192.png',
+  'public/icon-512x512.png',
+  'public/apple-touch-icon.png',
+  'public/favicon-32x32.png',
+  'public/favicon-16x16.png'
+];
+
+const allIconsExist = iconFiles.every(file => existsSync(file));
+
+if (allIconsExist) {
+  console.log('✅ PWA icons already exist, skipping generation');
+  process.exit(0);
+}
+
+// Try to generate icons only if canvas is available
+let canvas;
+try {
+  const canvasModule = await import('canvas');
+  canvas = canvasModule.default;
+} catch (error) {
+  console.log('⚠️  Canvas module not available (expected in CI/CD)');
+  console.log('✅ PWA icons should be pre-generated and committed to git');
+  process.exit(0);
+}
 
 function generateIcon(size, filename) {
-  const canvas = createCanvas(size, size);
-  const ctx = canvas.getContext('2d');
+  const canvasElement = canvas.createCanvas(size, size);
+  const ctx = canvasElement.getContext('2d');
 
   // Background gradient (orange theme)
   const gradient = ctx.createLinearGradient(0, 0, size, size);
@@ -37,7 +63,7 @@ function generateIcon(size, filename) {
   ctx.fillText('☕', size / 2, size / 2);
 
   // Save
-  const buffer = canvas.toBuffer('image/png');
+  const buffer = canvasElement.toBuffer('image/png');
   writeFileSync(filename, buffer);
   console.log(`✅ Generated: ${filename}`);
 }
@@ -54,5 +80,6 @@ try {
   console.error('❌ Error generating icons:', error.message);
   console.log('\n💡 Alternative: Open http://localhost:5173/icon-generator.html in your browser');
   console.log('   and manually download the icons.');
+  process.exit(1);
 }
 
