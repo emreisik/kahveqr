@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>KahveQR Icon Generator</title>
+</head>
+<body style="margin: 0; padding: 20px; font-family: sans-serif;">
+  <h2>KahveQR PWA Icon Generator</h2>
+  <p>Bu sayfa PWA ikonlarını oluşturur. Aşağıdaki butonlara tıklayarak indirin:</p>
+  
+  <div style="margin: 20px 0;">
+    <button onclick="generateIcon(192)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">192x192 İndir</button>
+    <button onclick="generateIcon(512)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">512x512 İndir</button>
+    <button onclick="generateIcon(180)" style="padding: 10px 20px; margin: 5px; cursor: pointer;">180x180 Apple İndir</button>
+  </div>
+
+  <canvas id="canvas" style="border: 1px solid #ddd;"></canvas>
+
+  <script>
+    function generateIcon(size) {
+      const canvas = document.getElementById('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Background gradient (orange theme)
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#f97316');
+      gradient.addColorStop(1, '#ea580c');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+
+      // Coffee emoji (centered)
+      ctx.font = `${size * 0.6}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('☕', size / 2, size / 2);
+
+      // Download
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = size === 180 ? 'apple-touch-icon.png' : `icon-${size}x${size}.png`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // Auto-generate preview
+    window.onload = () => generateIcon(192);
+  </script>
+</body>
+</html>
+

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from 'sonner';
 import { BottomNav } from './components/layout/BottomNav';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { WalletPage } from './pages/WalletPage';
 import { CafeDetailPage } from './pages/CafeDetailPage';
@@ -112,6 +113,7 @@ function AppRoutes() {
         </Route>
       </Routes>
       {showBottomNav && <BottomNav />}
+      <PWAInstallPrompt />
     </>
   );
 }
