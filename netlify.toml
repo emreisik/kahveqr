@@ -19,12 +19,18 @@
   to = "/index.html"
   status = 200
 
-# Functions configuration
+# Functions configuration (Netlify Pro optimized)
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  # Increase timeout for longer operations (max 10s on free plan)
-  # For paid plans, you can increase this to 26s
+  # Netlify Pro: Increased timeout and size limits
+  # Function timeout: 26 seconds (Pro plan)
+  # Function size: up to 10 GB (Pro plan)
+  included_files = [
+    "backend/prisma/schema.prisma",
+    "node_modules/.prisma/**/*",
+    "node_modules/@prisma/client/**/*"
+  ]
 
 # Environment variables (set these in Netlify Dashboard)
 # DATABASE_URL = "your-neon-postgresql-url"
