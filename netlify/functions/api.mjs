@@ -24,8 +24,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check - WITH /api prefix (Netlify keeps the full path via :splat)
+app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
     message: 'KahveQR API is running on Netlify Pro',
@@ -37,17 +37,17 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Routes - WITHOUT /api prefix (Netlify strips it automatically)
-app.use('/auth', authRoutes);
-app.use('/business-auth', businessAuthRoutes);
-app.use('/cafes', cafeRoutes);
-app.use('/memberships', membershipRoutes);
-app.use('/activities', activityRoutes);
-app.use('/users', userRoutes);
-app.use('/scan', scanRoutes);
-app.use('/business', businessStatsRoutes);
-app.use('/business/staff', businessStaffRoutes);
-app.use('/business/branches', branchesRoutes);
+// Routes - WITH /api prefix (Netlify redirect keeps full path)
+app.use('/api/auth', authRoutes);
+app.use('/api/business-auth', businessAuthRoutes);
+app.use('/api/cafes', cafeRoutes);
+app.use('/api/memberships', membershipRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/scan', scanRoutes);
+app.use('/api/business', businessStatsRoutes);
+app.use('/api/business/staff', businessStaffRoutes);
+app.use('/api/business/branches', branchesRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
